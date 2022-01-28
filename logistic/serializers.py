@@ -26,19 +26,24 @@ class StockSerializer(serializers.ModelSerializer):
         model = Stock
         fields = '__all__'
 
+    print(positions)
+    print(positions.data)
+
     def create(self, validated_data):
         # достаем связанные данные для других таблиц
         positions = validated_data.pop('positions')
 
         # создаем склад по его параметрам
         stock = super().create(validated_data)
-
+        pos = []
         # здесь вам надо заполнить связанные таблицы
         # в нашем случае: таблицу StockProduct
         # с помощью списка positions
-        # for position in positions:
-        #     position = Product.objects.get_or_create()
-        #     stock.positions.add(position)
+        for position in positions:
+            p = Product.objects.create(position)
+            pos.append(p)
+            print(pos)
+        stock.positions.set(pos)
 
         return stock
 
